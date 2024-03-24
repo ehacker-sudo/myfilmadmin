@@ -2,5 +2,5 @@
     <script>
         document.write(new Date().getFullYear())
     </script> 
-    &copy;  Y Tế Box
+    {{-- &copy;  Y Tế Box --}}
 </div>

@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>Y Tế Box</title>
+    <title>My Film Admin</title>
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
@@ -22,7 +22,7 @@
 
     <!-- Site favicon -->
 	{{-- <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('vendors/images/logo_2.png')}}"/> --}}
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('vendors/images/logo_2.png')}}"/>
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('vendors/images/logo.svg')}}"/>
     {{-- <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('vendors/images/logo_2.png')}}"/> --}}
 
     <link rel="stylesheet" type="text/css" href="{{ asset('src/plugins/jquery-steps/jquery.steps.css')}}"/>

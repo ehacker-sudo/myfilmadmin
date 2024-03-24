@@ -86,7 +86,6 @@
                                 </div>
                             </div>
                         </div>
-                        <script src="{{ asset('vendors/scripts/script.min.js') }}"></script>
                         <script>
                             function create_user() { 
                                 $.ajax({

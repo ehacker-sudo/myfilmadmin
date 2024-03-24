@@ -12,10 +12,10 @@
 			href="{{ asset('src/plugins/datatables/css/responsive.bootstrap4.min.css')}}"
 		/>
         <link
-            rel="stylesheet"
-            type="text/css"
-            href="{{ asset('src/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css')}}"
-        />
+			rel="stylesheet"
+			type="text/css"
+			href="{{ asset('src/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css')}}"
+		/>
         <link
 			rel="stylesheet"
 			type="text/css"
@@ -31,7 +31,7 @@
                 <div class="row">
                     <div class="col-md-6 col-sm-12">
                         <div class="title">
-                            <h4>Danh sách người dùng</h4>
+                            <h4>Danh sách danh sách xem</h4>
                         </div>
                         <nav aria-label="breadcrumb" role="navigation">
                             <ol class="breadcrumb">
@@ -39,21 +39,21 @@
                                     <a href="https://ytebox.vn">Trang chủ</a>
                                 </li>
                                 <li class="breadcrumb-item active" aria-current="page">
-                                    Danh sách người dùng 
+                                    Danh sách danh sách xem
                                 </li>
                             </ol>
                         </nav>
                     </div>
                     <div class="col-md-6 col-sm-12 text-right">
-                        <a 
-                            href="#" 
-                            class="btn btn-primary" 
-                            data-toggle="modal" 
-                            data-target="#add-user" 
-                            type="button" 
-                        > 
-                            Thêm người dùng 
-                        </a>
+                        <a
+                            href="#"
+                            class="btn btn-primary"
+                            data-toggle="modal"
+                            data-target="#add-watchlist"
+                            type="button"
+                        >
+                            Thêm danh sách xem
+                        </a>    
                     </div>
                 </div>
             </div>
@@ -61,66 +61,70 @@
             <!-- Simple Datatable start -->
             <div class="card-box mb-30">
                 <div class="pd-20">
-                    <h4 class="text-blue h4">Thông tin tài khoản người dùng</h4>
+                    <h4 class="text-blue h4">Thông tin danh sách xem</h4>
                 </div>
                 <div class="pb-20">
                     <table class="table hover multiple-select-row">
                         <thead>
                             <tr>
-                                <th class="table-plus datatable-nosort" width="2%">STT</th>
-                                <th>Họ tên</th>
-                                <th>Email</th>
-                                <th>Vai trò - Vị trí</th>
-                                <th>Tên đăng nhập</th>
-                                <th>Đăng nhập lần cuối</th>
+                                <th class="table-plus datatable-nosort" width="2%">ID</th>
+                                <th>Film_id</th>
+                                <th>Season_id</th>
+                                <th>Episode_id</th>
+                                <th>Media_Type</th>
+                                <th>user_id</th>
+                                <th>Thời gian tạo</th>
+                                <th>Thời gian cập nhật</th>
                                 <th class="datatable-nosort">Tùy chọn</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @if (isset($user))
-                            @foreach ($user as $key => $item)
-                            <tr>
-                                <td class="table-plus">{{$key +1}}</td>
-                                <td>{{$item->fullname ?? ''}}</td>
-                                <td>{{$item->email ?? ''}}</td>
-                                <td>{{$role[$item->role] ?? ''}}</td>
-                                <td>{{$item->name ?? ''}}</td>
-                                <td>{{$item->last_login_time ?? ''}}</td>
-                                <td>
-                                    <div class="dropdown">
-                                        <a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle" href="#" role="button" data-toggle="dropdown">
-                                            <i class="dw dw-more"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-                                            <a
-                                                onclick="take_url_edit_user('{{$item->_id}}')"
-                                                href="#"
-                                                class="dropdown-item"
-                                                data-toggle="modal"
-                                                data-target="#edit-user"
-                                                type="button"
-                                            >
-                                                <i class="dw dw-edit2"></i> Sửa người dùng
+                            @if (isset($watchlists))
+                            @foreach ($watchlists as $key => $item)
+                                <tr>
+                                    <td class="table-plus">{{$key +1}}</td>
+                                    <td>{{$item->film_id ?? ''}}</td>
+                                    <td>{{$item->season_id ?? ''}}</td>
+                                    <td>{{$item->episode_id ?? ''}}</td>
+                                    <td>{{$item->media_type ?? ''}}</td>
+                                    <td>{{$item->user_id ?? ''}}</td>
+                                    <td>{{$item->created_at ?? ''}}</td>
+                                    <td>{{$item->updated_at ?? ''}}</td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle" href="#" role="button" data-toggle="dropdown">
+                                                <i class="dw dw-more"></i>
                                             </a>
-                                            <a class="dropdown-item" href="{{route('manager.delete.user',['user' => $item->_id])}}"><i class="dw dw-delete-3"></i> Xóa người dùng</a>
+                                            <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
+                                                <a
+                                                    onclick="take_url_edit_key('{{$item->_id}}')"
+                                                    href="#"
+                                                    class="dropdown-item"
+                                                    data-toggle="modal"
+                                                    data-target="#edit-rate"
+                                                    type="button"
+                                                >
+                                                    <i class="dw dw-edit2"></i> Sửa tài khoản API
+                                                </a>
+                                                <a class="dropdown-item" href="{{route('manager.delete.rate',['rate' => $item->_id])}}"><i class="dw dw-delete-3"></i> Xóa tài khoản API</a>
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            @include('management.modal.user.edit')
+                                    </td>
+                                </tr> 
+                                {{-- @include('management.modal.rate.edit') --}}
                             @endforeach    
-                            @endif
+                            @endif 
                         </tbody>
                     </table>
                 </div>
             </div>
-            
         </div>
         @include('layouts.bar.footer')
     </div>
 </div>
+
 <!-- modals-->
-@include('management.modal.user.create')
+@include('management.modal.watchlist.create')
 
 @endsection
 
@@ -142,7 +146,7 @@
     <script src="{{ asset('src/plugins/datatables/js/vfs_fonts.js') }}"></script>
 
     <script src="{{ asset('vendors/scripts/datatable-setting.js') }}"></script>
-
+    <script src="{{ asset('src/plugins/bootstrap-tagsinput/bootstrap-tagsinput.js')}}"></script>
     <script src="{{ asset('src/plugins/sweetalert2/sweetalert2.all.js') }}"></script>
     <script src="{{ asset('src/plugins/sweetalert2/sweet-alert.init.js') }}"></script>
     <noscript
