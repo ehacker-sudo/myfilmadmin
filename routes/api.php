@@ -39,4 +39,19 @@ Route::middleware('auth:sanctum')->controller(UserController::class)->group(func
     Route::get('user/comment', 'show_comment');
     Route::post('/comment/store', 'comment_store');
     Route::delete('/comment/destroy', 'comment_destroy');
+
+    Route::get('/history', 'history');
+    Route::get('user/history', 'show_history');
+    Route::post('/history/store', 'history_store');
+    Route::delete('/history/destroy', 'history_destroy');
+
+    Route::get('/watchlist', 'watchlist');
+    Route::get('user/watchlist', 'show_watchlist');
+    Route::post('/watchlist/store', 'watchlist_store');
+    Route::delete('/watchlist/destroy', 'watchlist_destroy');
+
+    Route::get('/rate', 'rate');
+    Route::get('user/rate', 'show_rate');
+    Route::post('/rate/store', 'rate_store');
+    Route::delete('/rate/destroy', 'rate_destroy');
 });
