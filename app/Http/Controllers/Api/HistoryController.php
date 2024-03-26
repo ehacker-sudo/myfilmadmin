@@ -30,13 +30,13 @@ class HistoryController extends Controller
      */
     public function show_history(Request $request)
     {
-        $watchlists = $request->user()->watchlists;
-        $list_watchlist = [];
-        foreach ($watchlists as $value) {
-            $list_watchlist = Arr::prepend($list_watchlist, $value->film()->first()->toArray());
+        $histories = $request->user()->histories;
+        $list_history = [];
+        foreach ($histories as $value) {
+            $list_history = Arr::prepend($list_history, $value->film()->first()->toArray());
         }
         return response()->json([
-            "results" => $list_watchlist
+            "results" => $list_history
         ]);
     }
 
@@ -66,34 +66,10 @@ class HistoryController extends Controller
     {
         $input = $request->all();
         if ($input["media_type"] == "episode") {
-            // $watchlist = Watchlist::all();
-            // foreach ($watchlist as $key => $value) {
-                
-            // }
-            // $watchlist = Watchlist::query();
-            // if (isset($input["film_id"])) {
-            //     $watchlist = $watchlist->where("film_id",$input["film_id"]);
-            // }
-            // if (isset($input["season_id"])) {
-            //     $watchlist = $watchlist->where("season_id",$input["season_id"]);
-            // }
-            // if (isset($input["episode_id"])) {
-            //     $watchlist = $watchlist->where("episode_id",$input["episode_id"]);
-            // }
-            // if (isset($input["media_type"])) {
-            //     $watchlist = $watchlist->where("media_type",$input["media_type"]);
-            // }
-            // if ($watchlist->exists()) {
-            //     $textError = [
-            //         'episode_id' => "Mã tập đã tồn tại",
-            //     ];
-            //     return response()->error($textError);
-            // }
         }
-         else{
-            $watchlists = $request->user()->watchlists;
-            $list_watchlist = [];
-            foreach ($watchlists as $value) {
+        else{
+            $histories = $request->user()->histories;
+            foreach ($histories as $value) {
                 if ($value->film()->where("film_id",$input["film_id"])->where("media_type",$input["media_type"])->exists()) {
                     $textError = [
                         'film_id' => "Mã phim đã tồn tại",
@@ -101,18 +77,26 @@ class HistoryController extends Controller
                     return response()->error($textError);
                 }
             }
-         }
-        $input["created_at"] = Carbon::now()->toDateTimeString();
-        $input["updated_at"] = Carbon::now()->toDateTimeString();
-        $film = Film::create($input);
+            if (Film::where("film_id",$input["film_id"])->where("media_type",$input["media_type"])->doesntExist()) {
+                $input["created_at"] = Carbon::now()->toDateTimeString();
+                $input["updated_at"] = Carbon::now()->toDateTimeString();
+                $film = Film::create($input);
+            }
+            else {
+                $film = Film::where("film_id",$input["film_id"])->where("media_type",$input["media_type"])->first();
+            }
+        }
         $input["user_id"] = $request->user()->id;
-        $watchlist = [
+        $history = [
             "film_id" => $film->_id,
             "created_at" => Carbon::now()->toDateTimeString(),
             "updated_at" => Carbon::now()->toDateTimeString(),
             "user_id" => $request->user()->id,
         ];
-        WatchList::query()->insert($watchlist);
+        if (History::query()->count() >= 10) {
+            History::query()->skip(9)->delete();
+        }
+        History::query()->insert($history);
 
         return response()->success();
     }

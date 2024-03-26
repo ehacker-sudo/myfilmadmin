@@ -8,4 +8,12 @@ use Jenssegers\Mongodb\Eloquent\Model;
 class History extends Model
 {
     use HasFactory;
+
+    /**
+     * Get the film for the blog post.
+     */
+    public function film()
+    {
+        return $this->belongsTo(Film::class,"film_id","_id");
+    }
 }

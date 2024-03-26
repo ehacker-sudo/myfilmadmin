@@ -91,7 +91,6 @@ class WatchListController extends Controller
         }
          else{
             $watchlists = $request->user()->watchlists;
-            $list_watchlist = [];
             foreach ($watchlists as $value) {
                 if ($value->film()->where("film_id",$input["film_id"])->where("media_type",$input["media_type"])->exists()) {
                     $textError = [
@@ -100,10 +99,15 @@ class WatchListController extends Controller
                     return response()->error($textError);
                 }
             }
+            if (Film::where("film_id",$input["film_id"])->where("media_type",$input["media_type"])->doesntExist()) {
+                $input["created_at"] = Carbon::now()->toDateTimeString();
+                $input["updated_at"] = Carbon::now()->toDateTimeString();
+                $film = Film::create($input);
+            }
+            else {
+                $film = Film::where("film_id",$input["film_id"])->where("media_type",$input["media_type"])->first();
+            }
          }
-        $input["created_at"] = Carbon::now()->toDateTimeString();
-        $input["updated_at"] = Carbon::now()->toDateTimeString();
-        $film = Film::create($input);
         $input["user_id"] = $request->user()->id;
         $watchlist = [
             "film_id" => $film->_id,
