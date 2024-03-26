@@ -61,12 +61,14 @@ class AuthController extends Controller
             'name' => 'required|string|max:255|unique:App\Models\User,name',
             'email' => 'required|string|email|max:255|unique:App\Models\User,email',
             'password' => 'required|string|min:8',
+            'confirm_password' => 'required_with:password|same:password',
         ];
 
         // Manually Creating Validators...
         $validator = Validator::make($input, $rules, $messages = [
             'required' => 'Hãy nhập :attribute',
             'string'   => ':attribute Phải là chuỗi',
+            'same' => ':attribute và :other chưa khớp với nhau',
             'email'   => 'Hãy nhập đúng định dạng email',
             "unique" => ':attribute đã tồn tại',
             "min" => ":attribute phải có ít nhất :min kí tự",

@@ -57,17 +57,17 @@ class HistoryController extends Controller
             //  'confirm_password' => 'mật khẩu xác thực',
          ]);
           
-         if ($validator->fails()) {
-             $textError = [
-                 'film_id' => $validator->errors()->first('film_id') ?? '',
-                 'season_id' => $validator->errors()->first('season_id') ?? '',
-                 'episode_id' => $validator->errors()->first('episode_id') ?? '',
-                 'media_type' => $validator->errors()->first('media_type') ?? '',
-                 'person_id' => $validator->errors()->first('person_id') ?? '',
-                 'user_id' => $validator->errors()->first('user_id') ?? '',
-             ];
-             return response()->error($textError);
-         }
+        if ($validator->fails()) {
+            $textError = [
+                'film_id' => $validator->errors()->first('film_id') ?? '',
+                'season_id' => $validator->errors()->first('season_id') ?? '',
+                'episode_id' => $validator->errors()->first('episode_id') ?? '',
+                'media_type' => $validator->errors()->first('media_type') ?? '',
+                'person_id' => $validator->errors()->first('person_id') ?? '',
+                'user_id' => $validator->errors()->first('user_id') ?? '',
+            ];
+            return response()->error($textError);
+        }
  
          if ($input["media_type"] == "episode") {
             if (History::where("film_id",$input["film_id"])->where("season_id",$input["season_id"])->where("episode_id",$input["episode_id"])->where("media_type",$input["media_type"])->exists()) {

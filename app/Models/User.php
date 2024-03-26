@@ -71,7 +71,7 @@ class User extends Authenticatable
         return $this->hasMany(Rate::class);
     }
 
-        /**
+    /**
      * Get the comments for the blog post.
      */
     public function watchlists()

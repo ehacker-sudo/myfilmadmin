@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Comment;
+use App\Models\Film;
 use App\Models\History;
 use App\Models\Rate;
 use App\Models\WatchList;
@@ -130,7 +131,7 @@ class UserController extends Controller
     }
 
 
-            /**
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -140,7 +141,8 @@ class UserController extends Controller
         $historys = $request->user()->histories;
         return response()->json($historys);
     }
-            /**
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -148,75 +150,74 @@ class UserController extends Controller
     public function history_store(Request $request)
     {
         $input = $request->all();
-        $rules = [
-             'film_id' => 'required_if:media_type,episode,tv,movie',
-             'season_id' => 'required_if:media_type,episode',
-             'episode_id' => 'required_if:media_type,episode',
-             'person_id' => 'required_if:media_type,person',
-             'media_type' => 'required',
-             'user_id' => 'required',
-         ];
+        // $rules = [
+        //      'film_id' => 'required_if:media_type,episode,tv,movie',
+        //      'season_id' => 'required_if:media_type,episode',
+        //      'episode_id' => 'required_if:media_type,episode',
+        //      'person_id' => 'required_if:media_type,person',
+        //      'media_type' => 'required',
+        //      'user_id' => 'required',
+        //  ];
  
-         $messages = [
-             'unique' => ':attribute đã tồn tại',
-             'same' => ':attribute và :other chưa khớp với nhau',
-             'required_with' => 'Hãy nhập :attribute',
-             'required' => 'Hãy nhập :attribute',
-             'required_if' => 'Hãy nhập :attribute',
-             'email' => 'Hãy nhập đúng định dạng :attribute',
-         ];
+        //  $messages = [
+        //      'unique' => ':attribute đã tồn tại',
+        //      'same' => ':attribute và :other chưa khớp với nhau',
+        //      'required_with' => 'Hãy nhập :attribute',
+        //      'required' => 'Hãy nhập :attribute',
+        //      'required_if' => 'Hãy nhập :attribute',
+        //      'email' => 'Hãy nhập đúng định dạng :attribute',
+        //  ];
  
-         // Manually Creating Validators...
-         $validator = Validator::make($input, $rules, $messages, [
-            //  'name' => 'tên đăng nhập',
-            //  'email' => 'địa chỉ email',
-            //  'password' => 'mật khẩu',
-            //  'confirm_password' => 'mật khẩu xác thực',
-         ]);
+        //  // Manually Creating Validators...
+        //  $validator = Validator::make($input, $rules, $messages, [
+        //     //  'name' => 'tên đăng nhập',
+        //     //  'email' => 'địa chỉ email',
+        //     //  'password' => 'mật khẩu',
+        //     //  'confirm_password' => 'mật khẩu xác thực',
+        //  ]);
           
-         if ($validator->fails()) {
-             $textError = [
-                 'film_id' => $validator->errors()->first('film_id') ?? '',
-                 'season_id' => $validator->errors()->first('season_id') ?? '',
-                 'episode_id' => $validator->errors()->first('episode_id') ?? '',
-                 'media_type' => $validator->errors()->first('media_type') ?? '',
-                 'person_id' => $validator->errors()->first('person_id') ?? '',
-                 'user_id' => $validator->errors()->first('user_id') ?? '',
-             ];
-             return response()->error($textError);
-         }
+        //  if ($validator->fails()) {
+        //      $textError = [
+        //          'film_id' => $validator->errors()->first('film_id') ?? '',
+        //          'season_id' => $validator->errors()->first('season_id') ?? '',
+        //          'episode_id' => $validator->errors()->first('episode_id') ?? '',
+        //          'media_type' => $validator->errors()->first('media_type') ?? '',
+        //          'person_id' => $validator->errors()->first('person_id') ?? '',
+        //          'user_id' => $validator->errors()->first('user_id') ?? '',
+        //      ];
+        //      return response()->error($textError);
+        //  }
  
-         if ($input["media_type"] == "episode") {
-            if (History::where("film_id",$input["film_id"])->where("season_id",$input["season_id"])->where("episode_id",$input["episode_id"])->where("media_type",$input["media_type"])->exists()) {
-                $textError = [
-                    'episode_id' => "Mã tập đã tồn tại",
-                ];
-                return response()->error($textError);
-            }
-         }
-         elseif ($input["media_type"] == "person") {
-            if (History::where("person_id",$input["person_id"])->where("media_type",$input["media_type"])->exists()) {
-                $textError = [
-                    'person_id' => "Mã diễn viên đã tồn tại",
-                ];
-                return response()->error($textError);
-            }
-         }
-         else{
-            if (History::where("film_id",$input["film_id"])->where("media_type",$input["media_type"])->exists()) {
-                $textError = [
-                    'film_id' => "Mã phim đã tồn tại",
-                ];
-                return response()->error($textError);
-            }
-         }
+        //  if ($input["media_type"] == "episode") {
+        //     if (History::where("film_id",$input["film_id"])->where("season_id",$input["season_id"])->where("episode_id",$input["episode_id"])->where("media_type",$input["media_type"])->exists()) {
+        //         $textError = [
+        //             'episode_id' => "Mã tập đã tồn tại",
+        //         ];
+        //         return response()->error($textError);
+        //     }
+        //  }
+        //  elseif ($input["media_type"] == "person") {
+        //     if (History::where("person_id",$input["person_id"])->where("media_type",$input["media_type"])->exists()) {
+        //         $textError = [
+        //             'person_id' => "Mã diễn viên đã tồn tại",
+        //         ];
+        //         return response()->error($textError);
+        //     }
+        //  }
+        //  else{
+        //     if (History::where("film_id",$input["film_id"])->where("media_type",$input["media_type"])->exists()) {
+        //         $textError = [
+        //             'film_id' => "Mã phim đã tồn tại",
+        //         ];
+        //         return response()->error($textError);
+        //     }
+        //  }
 
          $rate = Arr::except($request->all(), ['_token']);
          $rate["created_at"] = Carbon::now()->toDateTimeString();
          $rate["updated_at"] = Carbon::now()->toDateTimeString();
          History::query()->insert($rate);
  
-
          return response()->success();
     }
 
@@ -229,111 +230,6 @@ class UserController extends Controller
     public function history_destroy(History $history)
     {
         $history->delete();
-        return response()->success();
-    }
-
-                /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function watchlist()
-    {
-        $watchlists = WatchList::all();
-        return response()->json($watchlists);
-    }
-
-
-            /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function show_watchlist(Request $request)
-    {
-        $watchlists = $request->user()->watchlists;
-        return response()->json($watchlists);
-    }
-            /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function watchlist_store(Request $request)
-    {
-        $input = $request->all();
-        $rules = [
-             'film_id' => 'required_if:media_type,episode,tv,movie',
-             'season_id' => 'required_if:media_type,episode',
-             'episode_id' => 'required_if:media_type,episode',
-             'media_type' => 'required',
-             'user_id' => 'required',
-         ];
- 
-         $messages = [
-             'unique' => ':attribute đã tồn tại',
-             'same' => ':attribute và :other chưa khớp với nhau',
-             'required_with' => 'Hãy nhập :attribute',
-             'required' => 'Hãy nhập :attribute',
-             'required_if' => 'Hãy nhập :attribute',
-             'email' => 'Hãy nhập đúng định dạng :attribute',
-         ];
- 
-         // Manually Creating Validators...
-         $validator = Validator::make($input, $rules, $messages, [
-            //  'name' => 'tên đăng nhập',
-            //  'email' => 'địa chỉ email',
-            //  'password' => 'mật khẩu',
-            //  'confirm_password' => 'mật khẩu xác thực',
-         ]);
-          
-         if ($validator->fails()) {
-             $textError = [
-                 'film_id' => $validator->errors()->first('film_id') ?? '',
-                 'season_id' => $validator->errors()->first('season_id') ?? '',
-                 'episode_id' => $validator->errors()->first('episode_id') ?? '',
-                 'media_type' => $validator->errors()->first('media_type') ?? '',
-                 'person_id' => $validator->errors()->first('person_id') ?? '',
-                 'user_id' => $validator->errors()->first('user_id') ?? '',
-             ];
-             return response()->error($textError);
-         }
- 
-         if ($input["media_type"] == "episode") {
-            if (Watchlist::where("film_id",$input["film_id"])->where("season_id",$input["season_id"])->where("episode_id",$input["episode_id"])->where("media_type",$input["media_type"])->exists()) {
-                $textError = [
-                    'episode_id' => "Mã tập đã tồn tại",
-                ];
-                return response()->error($textError);
-            }
-         }
-         else{
-            if (Watchlist::where("film_id",$input["film_id"])->where("media_type",$input["media_type"])->exists()) {
-                $textError = [
-                    'film_id' => "Mã phim đã tồn tại",
-                ];
-                return response()->error($textError);
-            }
-         }
-
-         $watchlist = Arr::except($request->all(), ['_token']);
-         $watchlist["created_at"] = Carbon::now()->toDateTimeString();
-         $watchlist["updated_at"] = Carbon::now()->toDateTimeString();
-         Watchlist::query()->insert($watchlist);
- 
-
-         return response()->success();
-    }
-
-        /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Rate  $rate
-     * @return \Illuminate\Http\Response
-     */
-    public function watchlist_destroy(watchlist $watchlist)
-    {
-        $watchlist->delete();
         return response()->success();
     }
 

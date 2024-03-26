@@ -106,7 +106,7 @@
                                                 >
                                                     <i class="dw dw-edit2"></i> Sửa tài khoản API
                                                 </a>
-                                                <a class="dropdown-item" href="{{route('manager.delete.rate',['rate' => $item->_id])}}"><i class="dw dw-delete-3"></i> Xóa tài khoản API</a>
+                                                <a class="dropdown-item" href="{{route('manager.delete.watchlist',['watchlist' => $item->_id])}}"><i class="dw dw-delete-3"></i> Xóa tài khoản API</a>
                                             </div>
                                         </div>
                                     </td>

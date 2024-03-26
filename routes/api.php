@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\DonThuoc;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\V1\ApiToken;
+use App\Http\Controllers\Api\WatchListController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,29 +30,32 @@ Route::prefix('auth')->group(function () {
     }); 
 });
 
-Route::get('v1/don-thuoc/tim-kiem',[DonThuoc::class,'tim_kiem'])->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('v1/don-thuoc/tim-kiem',[DonThuoc::class,'tim_kiem']);
+    Route::get('v1/api-token',[ApiToken::class,'api_token']);
 
-Route::get('v1/api-token',[ApiToken::class,'api_token'])->middleware('auth:sanctum');
+    Route::controller(UserController::class)->group(function () {
+        Route::get('/comment', 'comment');
+        Route::get('user/comment', 'show_comment');
+        Route::post('/comment/store', 'comment_store');
+        Route::delete('/comment/destroy', 'comment_destroy');
+    
+        Route::get('/history', 'history');
+        Route::get('user/history', 'show_history');
+        Route::post('/history/store', 'history_store');
+        Route::delete('/history/destroy', 'history_destroy');
+    
+        Route::get('/rate', 'rate');
+        Route::get('user/rate', 'show_rate');
+        Route::post('/rate/store', 'rate_store');
+        Route::delete('/rate/destroy', 'rate_destroy');
+    });
 
-
-Route::middleware('auth:sanctum')->controller(UserController::class)->group(function () {
-    Route::get('/comment', 'comment');
-    Route::get('user/comment', 'show_comment');
-    Route::post('/comment/store', 'comment_store');
-    Route::delete('/comment/destroy', 'comment_destroy');
-
-    Route::get('/history', 'history');
-    Route::get('user/history', 'show_history');
-    Route::post('/history/store', 'history_store');
-    Route::delete('/history/destroy', 'history_destroy');
-
-    Route::get('/watchlist', 'watchlist');
-    Route::get('user/watchlist', 'show_watchlist');
-    Route::post('/watchlist/store', 'watchlist_store');
-    Route::delete('/watchlist/destroy', 'watchlist_destroy');
-
-    Route::get('/rate', 'rate');
-    Route::get('user/rate', 'show_rate');
-    Route::post('/rate/store', 'rate_store');
-    Route::delete('/rate/destroy', 'rate_destroy');
+    Route::controller(WatchListController::class)->group(function () {
+        Route::get('/watchlist', 'watchlist');
+        Route::get('user/watchlist', 'show_watchlist');
+        Route::get('show/user/watchlist', 'show');
+        Route::post('/watchlist/store', 'watchlist_store');
+        Route::delete('/watchlist/destroy', 'watchlist_destroy');
+    });
 });
