@@ -213,7 +213,7 @@ class UserController extends Controller
          return response()->success();
     }
 
-        /**
+    /**
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Rate  $rate

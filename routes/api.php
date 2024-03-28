@@ -4,7 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\DonThuoc;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\HistoryController;
+use App\Http\Controllers\Api\RateController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\V1\ApiToken;
 use App\Http\Controllers\Api\WatchListController;
@@ -60,5 +62,20 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('user/history', 'show_history');
         Route::post('/history/store', 'history_store');
         Route::delete('/history/destroy', 'history_destroy');
+    });
+
+    Route::controller(RateController::class)->group(function () {
+        Route::get('/rate', 'rate');
+        Route::get('user/rate', 'show_rate');
+        Route::get('show/user/rate', 'show');
+        Route::post('/rate/store', 'rate_store');
+        Route::delete('/rate/destroy', 'rate_destroy');
+    });
+
+    Route::controller(CommentController::class)->group(function () {
+        Route::get('/comment', 'comment');
+        Route::get('user/comment', 'show_comment');
+        Route::post('/comment/store', 'comment_store');
+        Route::delete('/comment/destroy', 'comment_destroy');
     });
 });
