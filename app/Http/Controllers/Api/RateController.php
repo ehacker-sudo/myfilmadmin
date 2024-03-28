@@ -11,7 +11,7 @@ use Illuminate\Support\Arr;
 
 class RateController extends Controller
 {
-            /**
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -46,14 +46,34 @@ class RateController extends Controller
      */
     public function show(Request $request)
     {
+        $input = $request->all();
+
         $rates = $request->user()->rates;
-        $list_rate = [];
-        foreach ($rates as $value) {
-            $list_rate = Arr::prepend($list_rate, $value->film()->first()->toArray());
+
+        $isExist = false;
+        if ($input["media_type"] == "episode") {
+        } else {
+            foreach ($rates as $value) {
+                if ($value->film()->where("film_id", (int)$input["film_id"])->where("media_type", $input["media_type"])->exists()) {
+                    $isExist = true;
+                }
+            }
         }
-        return response()->json([
-            "results" => $list_rate
-        ]);
+        if ($isExist) {
+            // dd($input["film_id"]);
+            $film = Film::where("film_id", (int)$input["film_id"])->where("media_type", $input["media_type"])->first();
+            $user_rate = collect([])->merge([
+                "film_id" => $film->film_id,
+                "rate" => Rate::where("film_id", $film->_id)->first()->rate,
+                "results" => collect($film)->except("film_id")->merge(["id" => $film->film_id]),
+            ]);
+            return response()->json($user_rate);
+        } else {
+            $textError = [
+                'film_id' => "Người dùng chưa đánh giá phim này",
+            ];
+            return response()->error($textError);
+        }
     }
 
     /**
@@ -65,24 +85,23 @@ class RateController extends Controller
     {
         $input = $request->all();
         if ($input["media_type"] == "episode") {
-        }
-        else{
-            $histories = $request->user()->histories;
-            foreach ($histories as $value) {
-                if ($value->film()->where("film_id",$input["film_id"])->where("media_type",$input["media_type"])->exists()) {
+        } else {
+            $rates = $request->user()->rates;
+            foreach ($rates as $value) {
+                if ($value->film()->where("film_id", $input["film_id"])->where("media_type", $input["media_type"])->exists()) {
                     $textError = [
-                        'film_id' => "Mã phim đã tồn tại. Không thể thêm vào lịch sử xem",
+                        'film_id' => "Mã phim đã tồn tại. Không thể thêm đánh giá",
                     ];
                     return response()->error($textError);
                 }
             }
-            if (Film::where("film_id",$input["film_id"])->where("media_type",$input["media_type"])->doesntExist()) {
+            if (Film::where("film_id", $input["film_id"])->where("media_type", $input["media_type"])->doesntExist()) {
                 $input["created_at"] = Carbon::now()->toDateTimeString();
                 $input["updated_at"] = Carbon::now()->toDateTimeString();
+                $film = Arr::except($input, ['rate']);
                 $film = Film::create($input);
-            }
-            else {
-                $film = Film::where("film_id",$input["film_id"])->where("media_type",$input["media_type"])->first();
+            } else {
+                $film = Film::where("film_id", $input["film_id"])->where("media_type", $input["media_type"])->first();
             }
         }
         $input["user_id"] = $request->user()->id;
@@ -98,7 +117,7 @@ class RateController extends Controller
         return response()->success();
     }
 
-        /**
+    /**
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Rate  $rate

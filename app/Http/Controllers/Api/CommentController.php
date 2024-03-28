@@ -79,6 +79,7 @@ class CommentController extends Controller
             if (Film::where("film_id",$input["film_id"])->where("media_type",$input["media_type"])->doesntExist()) {
                 $input["created_at"] = Carbon::now()->toDateTimeString();
                 $input["updated_at"] = Carbon::now()->toDateTimeString();
+                $film = Arr::except($input, ['rate']);
                 $film = Film::create($input);
             }
             else {
