@@ -109,7 +109,9 @@ class RateController extends Controller
         ];
         Rate::query()->insert($rate);
 
-        return response()->success(202);
+        return response()->json([
+            "rate" => $input["rate"],
+        ],202);
     }
 
     /**
@@ -141,8 +143,10 @@ class RateController extends Controller
                 "rate" => $input["rate"]
             ]);
         }
-        
-        return response()->success(202);
+
+        return response()->json([
+            "rate" => $input["rate"]
+        ],202);
     }
 
     /**
