@@ -37,13 +37,13 @@ class AppServiceProvider extends ServiceProvider
             return response()->json([
                 'status' => "error",
                 'message' => $textError
-            ]);
+            ], 404);
         });
 
-        Response::macro('success', function () {
+        Response::macro('success', function ($status = 200) {
             return response()->json([
-                'status' => "success",
-            ]);
+                'status' => "OK",
+            ], $status);
         });
     }
 }

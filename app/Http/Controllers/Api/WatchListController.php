@@ -46,6 +46,31 @@ class WatchListController extends Controller
      */
     public function show(Request $request)
     {
+        $input = $request->all();
+
+        $watchlists = $request->user()->watchlists;
+
+        $isExist = false;
+        if ($input["media_type"] == "episode") {
+        } else {
+            foreach ($watchlists as $value) {
+                if ($value->film()->where("film_id", (int)$input["film_id"])->where("media_type", $input["media_type"])->exists()) {
+                    $isExist = true;
+                }
+            }
+        }
+        if ($isExist) {
+            // dd($input["film_id"]);
+            $film = Film::where("film_id", (int)$input["film_id"])->where("media_type", $input["media_type"])->first();
+            $user_rate = collect([])->merge([
+                "film_id" => $film->film_id,
+                "results" => collect($film)->except("film_id")->merge(["id" => $film->film_id]),
+            ]);
+            return response()->json($user_rate);
+        } else {
+            return response()->error("Phim này chưa có trong danh sách xem của người dùng");
+        }
+        
         $watchlists = $request->user()->watchlists;
         $list_watchlist = [];
         foreach ($watchlists as $value) {
@@ -93,10 +118,7 @@ class WatchListController extends Controller
             $watchlists = $request->user()->watchlists;
             foreach ($watchlists as $value) {
                 if ($value->film()->where("film_id",$input["film_id"])->where("media_type",$input["media_type"])->exists()) {
-                    $textError = [
-                        'film_id' => "Mã phim đã tồn tại",
-                    ];
-                    return response()->error($textError);
+                    return response()->error("Mã phim đã tồn tại");
                 }
             }
             if (Film::where("film_id",$input["film_id"])->where("media_type",$input["media_type"])->doesntExist()) {
@@ -126,9 +148,12 @@ class WatchListController extends Controller
      * @param  \App\Models\Rate  $rate
      * @return \Illuminate\Http\Response
      */
-    public function watchlist_destroy(watchlist $watchlist)
+    public function watchlist_destroy(Request $request)
     {
-        $watchlist->delete();
-        return response()->success();
+        $input = $request->all();
+
+        $film = Film::where("film_id", (int)$input["film_id"])->where("media_type", $input["media_type"])->first();
+        $request->user()->watchlists()->where("film_id",$film->_id)->delete();
+        return response()->success(204);
     }
 }
