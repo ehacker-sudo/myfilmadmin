@@ -109,7 +109,7 @@ class RateController extends Controller
         ];
         Rate::query()->insert($rate);
 
-        return response()->success();
+        return response()->success(202);
     }
 
     /**
@@ -141,28 +141,8 @@ class RateController extends Controller
                 "rate" => $input["rate"]
             ]);
         }
-        $rates = $request->user()->rates;
-
-        $isExist = false;
-        if ($input["media_type"] == "episode") {
-        } else {
-            foreach ($rates as $value) {
-                if ($value->film()->where("film_id", (int)$input["film_id"])->where("media_type", $input["media_type"])->exists()) {
-                    $isExist = true;
-                }
-            }
-        }
-        if ($isExist) {
-            $film = Film::where("film_id", (int)$input["film_id"])->where("media_type", $input["media_type"])->first();
-            $user_rate = collect([])->merge([
-                "film_id" => $film->film_id,
-                "rate" => Rate::where("film_id", $film->_id)->first()->rate,
-                "results" => collect($film)->except("film_id")->merge(["id" => $film->film_id]),
-            ]);
-            return response()->json($user_rate);
-        } else {
-            return response()->error("Người dùng chưa đánh giá phim này");
-        }
+        
+        return response()->success(202);
     }
 
     /**
