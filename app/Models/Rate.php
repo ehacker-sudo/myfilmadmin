@@ -10,6 +10,15 @@ class Rate extends Model
     use HasFactory;
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'rate',
+    ];
+
+    /**
      * Get the film for the blog post.
      */
     public function film()

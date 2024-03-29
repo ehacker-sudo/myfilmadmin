@@ -47,7 +47,6 @@ class RateController extends Controller
     public function show(Request $request)
     {
         $input = $request->all();
-
         $rates = $request->user()->rates;
 
         $isExist = false;
@@ -60,7 +59,6 @@ class RateController extends Controller
             }
         }
         if ($isExist) {
-            // dd($input["film_id"]);
             $film = Film::where("film_id", (int)$input["film_id"])->where("media_type", $input["media_type"])->first();
             $user_rate = collect([])->merge([
                 "film_id" => $film->film_id,
@@ -69,10 +67,7 @@ class RateController extends Controller
             ]);
             return response()->json($user_rate);
         } else {
-            $textError = [
-                'film_id' => "Người dùng chưa đánh giá phim này",
-            ];
-            return response()->error($textError);
+            return response()->error("Người dùng chưa đánh giá phim này");
         }
     }
 
@@ -118,14 +113,71 @@ class RateController extends Controller
     }
 
     /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function rate_update(Request $request)
+    {
+        $input = $request->all();
+        if ($input["media_type"] == "episode") {
+        } else {
+            // $rates = $request->user()->rates;
+            // foreach ($rates as $value) {
+            //     if ($value->film()->where("film_id", $input["film_id"])->where("media_type", $input["media_type"])->exists()) {
+            //         return response()->error("Mã phim đã tồn tại. Không thể thêm đánh giá");
+            //     }
+            // }
+            // if (Film::where("film_id", $input["film_id"])->where("media_type", $input["media_type"])->doesntExist()) {
+            //     $input["created_at"] = Carbon::now()->toDateTimeString();
+            //     $input["updated_at"] = Carbon::now()->toDateTimeString();
+            //     $film = Arr::except($input, ['rate']);
+            //     $film = Film::create($input);
+            // } else {
+            //     $film = Film::where("film_id", $input["film_id"])->where("media_type", $input["media_type"])->first();
+            // }
+            $film = Film::where("film_id", $input["film_id"])->where("media_type", $input["media_type"])->first();
+            $request->user()->rates()->where("film_id", $film->_id)->update([
+                "rate" => $input["rate"]
+            ]);
+        }
+        $rates = $request->user()->rates;
+
+        $isExist = false;
+        if ($input["media_type"] == "episode") {
+        } else {
+            foreach ($rates as $value) {
+                if ($value->film()->where("film_id", (int)$input["film_id"])->where("media_type", $input["media_type"])->exists()) {
+                    $isExist = true;
+                }
+            }
+        }
+        if ($isExist) {
+            $film = Film::where("film_id", (int)$input["film_id"])->where("media_type", $input["media_type"])->first();
+            $user_rate = collect([])->merge([
+                "film_id" => $film->film_id,
+                "rate" => Rate::where("film_id", $film->_id)->first()->rate,
+                "results" => collect($film)->except("film_id")->merge(["id" => $film->film_id]),
+            ]);
+            return response()->json($user_rate);
+        } else {
+            return response()->error("Người dùng chưa đánh giá phim này");
+        }
+    }
+
+    /**
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Rate  $rate
      * @return \Illuminate\Http\Response
      */
-    public function rate_destroy(Rate $rate)
+    public function rate_destroy(Request $request)
     {
-        $rate->delete();
-        return response()->success();
+        $input = $request->all();
+
+        $film = Film::where("film_id", (int)$input["film_id"])->where("media_type", $input["media_type"])->first();
+        $request->user()->watchlists()->where("film_id", $film->_id)->delete();
+
+        return response()->success(204);
     }
 }

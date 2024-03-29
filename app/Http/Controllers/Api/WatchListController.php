@@ -153,7 +153,7 @@ class WatchListController extends Controller
         $input = $request->all();
 
         $film = Film::where("film_id", (int)$input["film_id"])->where("media_type", $input["media_type"])->first();
-        $request->user()->watchlists()->where("film_id",$film->_id)->delete();
+        $request->user()->rates()->where("film_id",$film->_id)->delete();
         return response()->success(204);
     }
 }

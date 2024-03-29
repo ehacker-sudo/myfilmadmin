@@ -69,6 +69,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('user/rate', 'show_rate');
         Route::get('show/user/rate', 'show');
         Route::post('/rate/store', 'rate_store');
+        Route::put('/rate/update', 'rate_update');
         Route::delete('/rate/destroy', 'rate_destroy');
     });
 
