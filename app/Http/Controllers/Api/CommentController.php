@@ -46,14 +46,36 @@ class CommentController extends Controller
      */
     public function show(Request $request)
     {
-        $histories = $request->user()->histories;
-        $list_history = [];
-        foreach ($histories as $value) {
-            $list_history = Arr::prepend($list_history, $value->film()->first()->toArray());
+        $input = $request->all();
+        $rates = $request->user()->comments;
+
+        $isExist = false;
+        if ($input["media_type"] == "episode") {
+        } else {
+            foreach ($rates as $value) {
+                if ($value->film()->where("film_id", (int)$input["film_id"])->where("media_type", $input["media_type"])->exists()) {
+                    $isExist = true;
+                }
+            }
         }
-        return response()->json([
-            "results" => $list_history
-        ]);
+
+        if (isset($input["content"])) {
+            return response()->json(collect([])->merge([
+                "content" => $input["content"]
+            ]), 200);
+        }
+
+        if ($isExist) {
+            $film = Film::where("film_id", (int)$input["film_id"])->where("media_type", $input["media_type"])->first();
+            $user_content = collect([])->merge([
+                "film_id" => $film->film_id,
+                "content" => Comment::where("film_id", $film->_id)->first()->content,
+                "results" => collect($film)->except("film_id")->merge(["id" => $film->film_id]),
+            ]);
+            return response()->json($user_content);
+        } else {
+            return response()->error("Người dùng chưa bình luận phim này");
+        }
     }
 
     /**
@@ -97,6 +119,41 @@ class CommentController extends Controller
         Comment::query()->insert($history);
 
         return response()->success();
+    }
+
+        /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function comment_update(Request $request)
+    {
+        $input = $request->all();
+        if ($input["media_type"] == "episode") {
+        } else {
+            // $rates = $request->user()->rates;
+            // foreach ($rates as $value) {
+            //     if ($value->film()->where("film_id", $input["film_id"])->where("media_type", $input["media_type"])->exists()) {
+            //         return response()->error("Mã phim đã tồn tại. Không thể thêm đánh giá");
+            //     }
+            // }
+            // if (Film::where("film_id", $input["film_id"])->where("media_type", $input["media_type"])->doesntExist()) {
+            //     $input["created_at"] = Carbon::now()->toDateTimeString();
+            //     $input["updated_at"] = Carbon::now()->toDateTimeString();
+            //     $film = Arr::except($input, ['rate']);
+            //     $film = Film::create($input);
+            // } else {
+            //     $film = Film::where("film_id", $input["film_id"])->where("media_type", $input["media_type"])->first();
+            // }
+            $film = Film::where("film_id", $input["film_id"])->where("media_type", $input["media_type"])->first();
+            $request->user()->comments()->where("film_id", $film->_id)->update([
+                "content" => $input["content"]
+            ]);
+        }
+
+        return response()->json([
+            "content" => $input["content"]
+        ], 202);
     }
 
     /**

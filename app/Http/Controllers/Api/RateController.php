@@ -58,6 +58,13 @@ class RateController extends Controller
                 }
             }
         }
+
+        if (isset($input["rate"])) {
+            return response()->json(collect([])->merge([
+                "rate" => $input["rate"]
+            ]), 200);
+        }
+
         if ($isExist) {
             $film = Film::where("film_id", (int)$input["film_id"])->where("media_type", $input["media_type"])->first();
             $user_rate = collect([])->merge([
@@ -111,7 +118,7 @@ class RateController extends Controller
 
         return response()->json([
             "rate" => $input["rate"],
-        ],202);
+        ], 202);
     }
 
     /**
@@ -146,7 +153,7 @@ class RateController extends Controller
 
         return response()->json([
             "rate" => $input["rate"]
-        ],202);
+        ], 202);
     }
 
     /**

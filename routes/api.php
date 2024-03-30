@@ -76,7 +76,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::controller(CommentController::class)->group(function () {
         Route::get('/comment', 'comment');
         Route::get('user/comment', 'show_comment');
+        Route::get('show/user/comment', 'show');
         Route::post('/comment/store', 'comment_store');
+        Route::put('/comment/update', 'comment_update');
         Route::delete('/comment/destroy', 'comment_destroy');
     });
 });
