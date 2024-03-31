@@ -62,6 +62,9 @@ class AuthController extends Controller
     {
         $input = $request->all();
 
+        if (!isset($request->email)) {
+            return response()->json(['result' => false, 'message' => "OK", 'user' => null], 200);
+        }
         $rules = [
             'name' => 'required|string|max:255|unique:App\Models\User,name',
             'email' => 'required|string|email|max:255|unique:App\Models\User,email',
@@ -83,8 +86,9 @@ class AuthController extends Controller
         if ($validator->fails()) {
             $errors = $validator->errors();
             return response()->json([
-                'error' => $errors->all()
-            ]);
+                'result' => false,
+                'message' => $errors->all()
+            ],404);
         }
         
         $user = User::create([
