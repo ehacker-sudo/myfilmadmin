@@ -38,15 +38,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('v1/api-token',[ApiToken::class,'api_token']);
 
     Route::controller(UserController::class)->group(function () {
-        Route::get('/comment', 'comment');
-        Route::get('user/comment', 'show_comment');
-        Route::post('/comment/store', 'comment_store');
-        Route::delete('/comment/destroy', 'comment_destroy');
-    
-        Route::get('/rate', 'rate');
-        Route::get('user/rate', 'show_rate');
-        Route::post('/rate/store', 'rate_store');
-        Route::delete('/rate/destroy', 'rate_destroy');
+
     });
 
     Route::controller(WatchListController::class)->group(function () {
@@ -74,7 +66,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::controller(CommentController::class)->group(function () {
-        Route::get('/comment', 'comment');
+        Route::get('/comment', 'comment')->withoutMiddleware('auth:sanctum');;
         Route::get('user/comment', 'show_comment');
         Route::get('show/user/comment', 'show');
         Route::post('/comment/store', 'comment_store');

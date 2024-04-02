@@ -16,6 +16,8 @@ class Film extends Model
      */
     protected $fillable = [
         'film_id',
+        'season_id',
+        'episode_id',
         "backdrop_path",
         "poster_path",
         'name',
@@ -25,5 +27,10 @@ class Film extends Model
         'release_date',
         'created_at',
         'updated_at',
+        "series_id",
+        "season_number",
+        "episode_number",
+        "still_path",
+        "air_date",
     ];
 }

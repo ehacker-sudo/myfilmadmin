@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Comment;
 use App\Models\Film;
+use App\Models\Rate;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -16,10 +17,48 @@ class CommentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function comment()
+    public function comment(Request $request)
     {
-        $comments = Comment::all();
-        return response()->json($comments);
+        $input = $request->all();
+        $comments = Comment::query();
+        $tmdb_reviews = [];
+        $isExist = false;
+        
+        if (isset($input["film_id"]) && isset($input["media_type"])) {
+            if ($input["media_type"] == "episode") {
+            } else {
+                foreach (Comment::all() as $value) {
+                    if ($value->film()->where("film_id", (int)$input["film_id"])->where("media_type", $input["media_type"])->exists()) {
+                        $isExist = true;
+                    }
+                }
+            }
+        }
+        
+        if ($isExist) {
+            $film = Film::where("film_id", (int)$input["film_id"])->where("media_type", $input["media_type"])->first();
+            $comments->where("film_id", $film->_id);
+            foreach ($comments->get() as $key => $value) {
+                $tmdb_reviews = Arr::prepend($tmdb_reviews, [
+                    "author" => $value->user->name,
+                    "author_details" => [
+                        "name" =>  $value->user->name,
+                        "username" =>  $value->user->name,
+                        "avatar_path" => null,
+                        "rating" => Rate::where("user_id",$value->user_id)->where("film_id",$value->film_id)->exists() ? (double)Rate::where("user_id",$value->user_id)->where("film_id",$value->film_id)->first()->rate + 0.1 : null,
+                    ],
+                    "content" => $value->content,
+                    "created_at" => $value->created_at,
+                    // "created_at": "2015-02-23T11:11:56.401Z",
+                    // "id": "54eb0afcc3a36836d90062eb",
+                    // "updated_at": "2021-06-23T15:57:32.442Z",
+                    // "url": "https://www.themoviedb.org/review/54eb0afcc3a36836d90062eb"
+                ]);
+            }
+        }
+        return response()->json([
+            "results" => $tmdb_reviews
+        ]);
     }
 
     /**

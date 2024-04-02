@@ -35,7 +35,7 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        $this->renderable(function (AuthenticationException $e,$request) {
+        $this->renderable(function (AuthenticationException $e, $request) {
             // dd(get_class($e));
             if ($request->is('api/*')) {
                 return response()->json([
@@ -43,7 +43,7 @@ class Handler extends ExceptionHandler
                     'success' => false,
                     'status' => 404,
                     'message' => 'Invalid Route'
-                ]);
+                ], 401);
             }
         });
     }
