@@ -51,6 +51,13 @@ class RateController extends Controller
 
         $isExist = false;
         if ($input["media_type"] == "episode") {
+            if (isset($input["series_id"]) && isset($input["season_number"]) && isset($input["episode_number"]) && isset($input["media_type"])) {
+                foreach ($rates as $value) {
+                    if ($value->film()->where("film_id", (int)$input["series_id"])->where("season_number", (int)$input["season_number"])->where("episode_number", (int)$input["episode_number"])->where("media_type", $input["media_type"])->exists()) {
+                        $isExist = true;
+                    }
+                }
+            }
         } else {
             foreach ($rates as $value) {
                 if ($value->film()->where("film_id", (int)$input["film_id"])->where("media_type", $input["media_type"])->exists()) {
@@ -66,13 +73,18 @@ class RateController extends Controller
         }
 
         if ($isExist) {
-            $film = Film::where("film_id", (int)$input["film_id"])->where("media_type", $input["media_type"])->first();
-            $user_rate = collect([])->merge([
-                "film_id" => $film->film_id,
-                "rate" => Rate::where("film_id", $film->_id)->first()->rate,
-                "results" => collect($film)->except("film_id")->merge(["id" => $film->film_id]),
-            ]);
-            return response()->json($user_rate);
+            if ($input["media_type"] == "episode") {
+                $film = Film::where("film_id", (int)$input["series_id"])->where("season_number", (int)$input["season_number"])->where("episode_number", (int)$input["episode_number"])->where("media_type", $input["media_type"])->first();
+            } else {
+                $film = Film::where("film_id", (int)$input["film_id"])->where("media_type", $input["media_type"])->first();
+            }
+            
+            return response()->json(collect($film)->except("film_id")->merge(
+                [
+                    "id" => $film->film_id,
+                    "rate" => Rate::where("film_id", $film->_id)->first()->rate,
+                ]
+            ));
         } else {
             return response()->error("Người dùng chưa đánh giá phim này");
         }
@@ -87,6 +99,35 @@ class RateController extends Controller
     {
         $input = $request->all();
         if ($input["media_type"] == "episode") {
+            if (isset($input["series_id"]) && isset($input["season_number"]) && isset($input["episode_number"]) && isset($input["media_type"])) {
+                $rates = $request->user()->rates;
+                foreach ($rates as $value) {
+                    if ($value->film()->where("film_id", $input["series_id"])
+                        ->where("season_number", $input["season_number"])
+                        ->where("episode_number", $input["episode_number"])
+                        ->where("media_type", $input["media_type"])
+                        ->exists()
+                    ) {
+                        return response()->error("Mã tập đã tồn tại");
+                    }
+                    $film = Film::where("film_id", $input["series_id"])
+                        ->where("season_number", $input["season_number"])
+                        ->where("episode_number", $input["episode_number"])
+                        ->where("media_type", $input["media_type"]);
+                    if ($film->doesntExist()) {
+                        $input["created_at"] = Carbon::now()->toDateTimeString();
+                        $input["updated_at"] = Carbon::now()->toDateTimeString();
+                        $input["film_id"] = $input["series_id"];
+                        Film::query()->insert($input);
+                        $film = Film::where("film_id", $input["series_id"])
+                            ->where("season_number", $input["season_number"])
+                            ->where("episode_number", $input["episode_number"])
+                            ->where("media_type", $input["media_type"])->first();
+                    } else {
+                        $film = $film->first();
+                    }
+                }
+            }
         } else {
             $rates = $request->user()->rates;
             foreach ($rates as $value) {
@@ -130,21 +171,14 @@ class RateController extends Controller
     {
         $input = $request->all();
         if ($input["media_type"] == "episode") {
+            $film = Film::where("film_id", $input["series_id"])
+            ->where("season_number", $input["season_number"])
+            ->where("episode_number", $input["episode_number"])
+            ->where("media_type", $input["media_type"])->first();
+            $request->user()->rates()->where("film_id", $film->_id)->update([
+                "rate" => $input["rate"]
+            ]);
         } else {
-            // $rates = $request->user()->rates;
-            // foreach ($rates as $value) {
-            //     if ($value->film()->where("film_id", $input["film_id"])->where("media_type", $input["media_type"])->exists()) {
-            //         return response()->error("Mã phim đã tồn tại. Không thể thêm đánh giá");
-            //     }
-            // }
-            // if (Film::where("film_id", $input["film_id"])->where("media_type", $input["media_type"])->doesntExist()) {
-            //     $input["created_at"] = Carbon::now()->toDateTimeString();
-            //     $input["updated_at"] = Carbon::now()->toDateTimeString();
-            //     $film = Arr::except($input, ['rate']);
-            //     $film = Film::create($input);
-            // } else {
-            //     $film = Film::where("film_id", $input["film_id"])->where("media_type", $input["media_type"])->first();
-            // }
             $film = Film::where("film_id", $input["film_id"])->where("media_type", $input["media_type"])->first();
             $request->user()->rates()->where("film_id", $film->_id)->update([
                 "rate" => $input["rate"]

@@ -57,7 +57,7 @@ class WatchListController extends Controller
                     if ($value->film()->where("film_id", (int)$input["series_id"])->where("season_number", (int)$input["season_number"])->where("episode_number", (int)$input["episode_number"])->where("media_type", $input["media_type"])->exists()) {
                         $isExist = true;
                     }
-                }                
+                }
             }
         } else {
             if (isset($input["film_id"]) && isset($input["media_type"])) {
@@ -79,7 +79,6 @@ class WatchListController extends Controller
 
                 return response()->json(collect($film)->except("film_id")->merge(["id" => $film->film_id]));
             }
-            
         } else {
             return response()->error("Phim này chưa có trong danh sách xem của người dùng");
         }
@@ -115,9 +114,9 @@ class WatchListController extends Controller
                         $input["film_id"] = $input["series_id"];
                         Film::query()->insert($input);
                         $film = Film::where("film_id", $input["series_id"])
-                                    ->where("season_number", $input["season_number"])
-                                    ->where("episode_number", $input["episode_number"])
-                                    ->where("media_type", $input["media_type"])->first();
+                            ->where("season_number", $input["season_number"])
+                            ->where("episode_number", $input["episode_number"])
+                            ->where("media_type", $input["media_type"])->first();
                     } else {
                         $film = $film->first();
                     }
@@ -169,11 +168,12 @@ class WatchListController extends Controller
                     if ($value->film()->where("film_id", $input["series_id"])->where("season_number", $input["season_number"])->where("episode_number", $input["episode_number"])->where("media_type", $input["media_type"])->exists()) {
                         $isExist = true;
                     }
-                }      
+                }
                 $film = Film::where("film_id", $input["series_id"])
-                            ->where("season_number", $input["season_number"])
-                            ->where("episode_number", $input["episode_number"])
-                            ->where("media_type", $input["media_type"])->first();          
+                    ->where("season_number", $input["season_number"])
+                    ->where("episode_number", $input["episode_number"])
+                    ->where("media_type", $input["media_type"])
+                    ->first();
             }
         } else {
             if (isset($input["film_id"]) && isset($input["media_type"])) {
