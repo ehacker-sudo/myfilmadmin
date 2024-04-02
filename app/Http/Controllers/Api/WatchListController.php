@@ -92,7 +92,6 @@ class WatchListController extends Controller
     public function watchlist_store(Request $request)
     {
         $input = $request->all();
-        // return $input;
         if ($input["media_type"] == "episode") {
             if (isset($input["series_id"]) && isset($input["season_number"]) && isset($input["episode_number"]) && isset($input["media_type"])) {
                 $watchlists = $request->user()->watchlists;
@@ -104,22 +103,22 @@ class WatchListController extends Controller
                     ) {
                         return response()->error("Mã tập đã tồn tại");
                     }
+                }
+                $film = Film::where("film_id", $input["series_id"])
+                    ->where("season_number", $input["season_number"])
+                    ->where("episode_number", $input["episode_number"])
+                    ->where("media_type", $input["media_type"]);
+                if ($film->doesntExist()) {
+                    $input["created_at"] = Carbon::now()->toDateTimeString();
+                    $input["updated_at"] = Carbon::now()->toDateTimeString();
+                    $input["film_id"] = $input["series_id"];
+                    Film::query()->insert($input);
                     $film = Film::where("film_id", $input["series_id"])
                         ->where("season_number", $input["season_number"])
                         ->where("episode_number", $input["episode_number"])
-                        ->where("media_type", $input["media_type"]);
-                    if ($film->doesntExist()) {
-                        $input["created_at"] = Carbon::now()->toDateTimeString();
-                        $input["updated_at"] = Carbon::now()->toDateTimeString();
-                        $input["film_id"] = $input["series_id"];
-                        Film::query()->insert($input);
-                        $film = Film::where("film_id", $input["series_id"])
-                            ->where("season_number", $input["season_number"])
-                            ->where("episode_number", $input["episode_number"])
-                            ->where("media_type", $input["media_type"])->first();
-                    } else {
-                        $film = $film->first();
-                    }
+                        ->where("media_type", $input["media_type"])->first();
+                } else {
+                    $film = $film->first();
                 }
             }
         } else {
