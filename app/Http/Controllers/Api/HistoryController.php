@@ -66,6 +66,34 @@ class HistoryController extends Controller
     {
         $input = $request->all();
         if ($input["media_type"] == "episode") {
+            if (isset($input["series_id"]) && isset($input["season_number"]) && isset($input["episode_number"]) && isset($input["media_type"])) {
+                $histories = $request->user()->histories;
+                foreach ($histories as $value) {
+                    if ($value->film()->where("film_id", $input["series_id"])
+                        ->where("season_number", $input["season_number"])
+                        ->where("episode_number", $input["episode_number"])
+                        ->where("media_type", $input["media_type"])->exists()
+                    ) {
+                        return response()->error("Mã tập đã tồn tại");
+                    }
+                }
+                $film = Film::where("film_id", $input["series_id"])
+                    ->where("season_number", $input["season_number"])
+                    ->where("episode_number", $input["episode_number"])
+                    ->where("media_type", $input["media_type"]);
+                if ($film->doesntExist()) {
+                    $input["created_at"] = Carbon::now()->toDateTimeString();
+                    $input["updated_at"] = Carbon::now()->toDateTimeString();
+                    $input["film_id"] = $input["series_id"];
+                    Film::query()->insert($input);
+                    $film = Film::where("film_id", $input["series_id"])
+                        ->where("season_number", $input["season_number"])
+                        ->where("episode_number", $input["episode_number"])
+                        ->where("media_type", $input["media_type"])->first();
+                } else {
+                    $film = $film->first();
+                }
+            }
         }
         else{
             $histories = $request->user()->histories;
@@ -93,11 +121,11 @@ class HistoryController extends Controller
             "updated_at" => Carbon::now()->toDateTimeString(),
             "user_id" => $request->user()->id,
         ];
-        if (History::query()->count() >= 10) {
-            History::query()->skip(9)->delete();
-        }
         History::query()->insert($history);
 
+        if (History::query()->count() >= 11) {
+            History::query()->first()->delete();
+        }
         return response()->success();
     }
 

@@ -94,7 +94,7 @@ return [
             'driver' => 'mongodb',
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', 27017),
-            'database' => env('DB_DATABASE','tesla_medcomm'),
+            'database' => env('DB_DATABASE'),
             'username' => env('DB_USERNAME'),
             'password' => env('DB_PASSWORD'),
             'options' => [
@@ -103,7 +103,12 @@ return [
         
                 'database' => env('DB_AUTHENTICATION_DATABASE', 'admin'), // required with Mongo 3+
             ],
-        ]
+        ],
+        // 'mongodb' => [
+        //     'driver' => 'mongodb',
+        //     'dsn' => env('DB_URI', 'mongodb+srv://tat42:tadinhthanh1123@cluster0.mnryjgz.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'),
+        //     'database' => 'my_film_project',
+        // ],
     ],
 
     /*
