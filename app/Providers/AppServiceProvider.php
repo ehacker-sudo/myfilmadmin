@@ -33,11 +33,11 @@ class AppServiceProvider extends ServiceProvider
         $loader->alias(\Laravel\Sanctum\PersonalAccessToken::class, \App\Models\Sanctum\PersonalAccessToken::class);
         // Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
 
-        Response::macro('error', function ($textError) {
+        Response::macro('error', function ($textError, $status = 404) {
             return response()->json([
                 'status' => "error",
                 'message' => $textError
-            ], 404);
+            ], $status);
         });
 
         Response::macro('success', function ($status = 200) {

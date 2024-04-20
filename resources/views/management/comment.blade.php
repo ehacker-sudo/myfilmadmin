@@ -44,7 +44,7 @@
                             </ol>
                         </nav>
                     </div>
-                    <div class="col-md-6 col-sm-12 text-right">
+                    {{-- <div class="col-md-6 col-sm-12 text-right">
                         <a
                             href="#"
                             class="btn btn-primary"
@@ -54,7 +54,7 @@
                         >
                             Thêm bình luận
                         </a>    
-                    </div>
+                    </div> --}}
                 </div>
             </div>
             
@@ -68,11 +68,9 @@
                         <thead>
                             <tr>
                                 <th class="table-plus datatable-nosort" width="2%">ID</th>
-                                <th>Film_id</th>
-                                <th>Season_id</th>
-                                <th>Episode_id</th>
-                                <th>Media_Type</th>
-                                <th>user_id</th>
+                                <th>Tên phim</th>
+                                <th>Kiểu phim</th>
+                                <th>Tên người dùng</th>
                                 <th>Nội dung</th>
                                 <th>Thời gian tạo</th>
                                 <th>Thời gian cập nhật</th>
@@ -84,11 +82,9 @@
                             @foreach ($comments as $key => $item)
                                 <tr>
                                     <td class="table-plus">{{$key +1}}</td>
-                                    <td>{{$item->film_id ?? ''}}</td>
-                                    <td>{{$item->season_id ?? ''}}</td>
-                                    <td>{{$item->episode_id ?? ''}}</td>
-                                    <td>{{$item->media_type ?? ''}}</td>
-                                    <td>{{$item->user_id ?? ''}}</td>
+                                    <td>{{$item->film->name ?? $item->film->title ?? "" }}</td>
+                                    <td>{{$item->film->media_type ?? ''}}</td>
+                                    <td>{{$item->user->name ?? ''}}</td>
                                     <td>{{$item->content ?? ''}}</td>
                                     <td>{{$item->created_at ?? ''}}</td>
                                     <td>{{$item->updated_at ?? ''}}</td>
@@ -98,7 +94,7 @@
                                                 <i class="dw dw-more"></i>
                                             </a>
                                             <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-                                                <a
+                                                {{-- <a
                                                     onclick="take_url_edit_key('{{$item->_id}}')"
                                                     href="#"
                                                     class="dropdown-item"
@@ -107,7 +103,7 @@
                                                     type="button"
                                                 >
                                                     <i class="dw dw-edit2"></i> Sửa tài khoản API
-                                                </a>
+                                                </a> --}}
                                                 <a class="dropdown-item" href="{{route('manager.delete.rate',['rate' => $item->_id])}}"><i class="dw dw-delete-3"></i> Xóa tài khoản API</a>
                                             </div>
                                         </div>

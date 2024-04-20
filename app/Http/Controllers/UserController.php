@@ -177,7 +177,7 @@ class UserController extends Controller
     public function delete_user(User $user)
     {
         $user->delete();
-        return back();
+        return back()->with('status', 'Xóa người dùng thành công');
     }
 
     /**

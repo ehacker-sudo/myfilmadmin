@@ -86,8 +86,9 @@
                                 </div>
                             </div>
                         </div>
+                        <script src="{{ asset('vendors/scripts/script.min.js') }}"></script>
                         <script>
-                            function create_user() { 
+                            function create_user() {
                                 $.ajax({
                                     headers: {
                                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -101,8 +102,12 @@
                                     },
                                     url: "{{ route('manager.create.user.request') }}",
                                     success: function (response) {
-                                        if (response.status === "error") {
-                                            for (const key in response.message) {
+                                        $('form[id=create_user]')[0].submit();
+                                    }
+                                    ,
+                                    error: function (xhr,status,error) { 
+                                        var response = JSON.parse(xhr.responseText);
+                                        for (const key in response.message) {
                                                 if (key !== 'confirm_password') {
                                                     validate_(key, response.message[key])
                                                 }
@@ -118,12 +123,7 @@
                                                     }
                                                 }
                                             }
-                                        }
-                                        else if (response.status === "success") {
-                                            $('form[id=create_user]')[0].submit();   
-                                        }
-                                        
-                                    }
+                                     }
                                 })
                             }
 

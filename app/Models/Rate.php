@@ -25,4 +25,12 @@ class Rate extends Model
     {
         return $this->belongsTo(Film::class,"film_id","_id");
     }
+
+    /**
+     * Get the film for the blog post.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

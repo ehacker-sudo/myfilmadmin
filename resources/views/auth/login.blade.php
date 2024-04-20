@@ -52,7 +52,7 @@ Coded by www.creative-tim.com
         <div class="col-lg-5">
           <div class="card bg-secondary shadow border-0">
             <div class="card-header bg-white pb-2">
-              <div class="text-muted text-center mb-3"><small><img src="https://ytebox.vn/uploads/all/F2W3jst9jgAXIZn7QAWTmH9EhE9UWXnSDd8OZpCU.png" height="67px" alt="..."></small></div>
+              <div class="text-muted text-center mb-3"><small><img src="{{ asset('vendors/images/logo.svg')}}" height="67px" alt="..."></small></div>
             </div>
             <div class="card-body px-lg-5 py-lg-5">
               <div class="text-center text-muted mb-4">

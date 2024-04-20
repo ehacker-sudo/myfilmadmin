@@ -167,6 +167,6 @@ class RateController extends Controller
     public function destroy(Rate $rate)
     {
         $rate->delete();
-        return back();
+        return back()->with('status', 'Xóa đánh giá thành công');
     }
 }

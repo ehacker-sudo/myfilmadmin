@@ -92,7 +92,7 @@
                                             <i class="dw dw-more"></i>
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-                                            <a
+                                            {{-- <a
                                                 onclick="take_url_edit_user('{{$item->_id}}')"
                                                 href="#"
                                                 class="dropdown-item"
@@ -101,7 +101,7 @@
                                                 type="button"
                                             >
                                                 <i class="dw dw-edit2"></i> Sửa người dùng
-                                            </a>
+                                            </a> --}}
                                             <a class="dropdown-item" href="{{route('manager.delete.user',['user' => $item->_id])}}"><i class="dw dw-delete-3"></i> Xóa người dùng</a>
                                         </div>
                                     </div>
